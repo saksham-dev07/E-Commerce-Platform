@@ -446,7 +446,7 @@ Performance Monitoring:
 - 🎨 **UI/UX Designer** - Design & user research
 
 ### **Communication Channels**
-- 📧 **Email**: [team@ecommerce-platform.com](mailto:team@ecommerce-platform.com)
+- 📧 **Email**: [](mailto:)
 - 💬 **Slack**: #ecommerce-dev, #sprint-planning  
 - 🎥 **Video**: Daily standups, sprint ceremonies
 - 📝 **Documentation**: Confluence/Notion
