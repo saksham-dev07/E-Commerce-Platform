@@ -178,61 +178,149 @@ npm run dev
 ```
 ecommerce-platform/
 ├── 📋 AGILE DOCUMENTATION
-│   ├── PRODUCT_BACKLOG.md          # User stories & epics
-│   ├── SPRINT_10_BOARD.md          # Current sprint tracking  
-│   ├── RELEASE_PLAN.md             # Release roadmap
+│   ├── PRODUCT_BACKLOG.md              # User stories & epics
+│   ├── SPRINT_10_BOARD.md              # Current sprint tracking  
+│   ├── RELEASE_PLAN.md                 # Release roadmap
+│   ├── README_AGILE.md                 # Agile methodology guide
+│   ├── AGILE_PROJECT_STRUCTURE.md      # Project organization
+│   ├── agile-config.json              # Agile project settings
+│   ├── .github/
+│   │   └── copilot-instructions.md    # AI development guidelines
 │   └── docs/
-│       ├── TEAM_METRICS.md         # Velocity & KPIs
-│       ├── AGILE_CEREMONIES.md     # Scrum ceremonies
-│       └── SPRINT_9_RETROSPECTIVE.md
+│       ├── TEAM_METRICS.md             # Velocity & KPIs
+│       ├── AGILE_CEREMONIES.md         # Scrum ceremonies
+│       ├── SPRINT_9_RETROSPECTIVE.md   # Sprint retrospective
+│       ├── API_REFERENCE.md            # API documentation
+│       ├── GITHUB_INTEGRATION.md       # GitHub workflow
+│       └── USER_STORY_TEMPLATES.md     # Story templates
 │
 ├── 🎨 FRONTEND APPLICATION  
 │   └── src/
-│       ├── app/                    # Next.js App Router
-│       │   ├── (auth)/            # Authentication routes
-│       │   │   ├── buyer/         # Buyer portal
-│       │   │   └── seller/        # Seller portal  
-│       │   ├── api/               # API endpoints
-│       │   │   ├── auth/          # Authentication APIs
-│       │   │   ├── products/      # Product management
-│       │   │   ├── orders/        # Order processing
-│       │   │   └── cart/          # Shopping cart
-│       │   ├── buyer-dashboard/   # Buyer interface
-│       │   ├── seller/            # Seller interface
-│       │   │   ├── dashboard/     # Analytics & management
-│       │   │   └── add-product/   # Product creation
-│       │   ├── delivery-agent/    # Delivery interface
-│       │   ├── cart/              # Shopping cart
-│       │   └── search/            # Product search
+│       ├── app/                        # Next.js App Router
+│       │   ├── globals.css            # Global styles
+│       │   ├── layout.tsx             # Root layout
+│       │   ├── page.tsx               # Homepage
+│       │   ├── auth/                  # Authentication routes
+│       │   ├── api/                   # API endpoints
+│       │   │   ├── addresses/         # Address management
+│       │   │   ├── auth/              # Authentication APIs
+│       │   │   ├── cart/              # Shopping cart APIs
+│       │   │   ├── delivery/          # Delivery management
+│       │   │   ├── delivery-agent/    # Delivery agent APIs
+│       │   │   ├── notifications/     # Notification system
+│       │   │   ├── orders/            # Order processing
+│       │   │   ├── products/          # Product management
+│       │   │   ├── profile/           # User profile APIs
+│       │   │   ├── search/            # Search functionality
+│       │   │   ├── seller/            # Seller APIs
+│       │   │   ├── stats/             # Analytics APIs
+│       │   │   ├── upload/            # File upload APIs
+│       │   │   └── wishlist/          # Wishlist APIs
+│       │   ├── buyer-dashboard/       # Buyer interface
+│       │   ├── seller/                # Seller interface
+│       │   │   ├── dashboard/         # Analytics & management
+│       │   │   └── add-product/       # Product creation
+│       │   ├── delivery-agent/        # Delivery interface
+│       │   ├── cart/                  # Shopping cart
+│       │   ├── search/                # Product search
+│       │   └── wishlist/              # Wishlist management
 │       │
-│       ├── components/            # Reusable components
-│       │   ├── ui/               # shadcn/ui components
-│       │   ├── buyer/            # Buyer-specific components
-│       │   ├── notifications/    # Notification system
-│       │   ├── Navbar.tsx        # Navigation
-│       │   ├── ProductGrid.tsx   # Product display
-│       │   └── PopularCategoriesSection.tsx
+│       ├── components/                # Reusable components
+│       │   ├── ui/                   # shadcn/ui components
+│       │   ├── buyer/                # Buyer-specific components
+│       │   ├── notifications/        # Notification system
+│       │   ├── Navbar.tsx            # Navigation header
+│       │   ├── Footer.tsx            # Site footer
+│       │   ├── ProductGrid.tsx       # Product display grid
+│       │   ├── ProductGridEnhanced.tsx # Enhanced product grid
+│       │   ├── PopularCategoriesSection.tsx # Category navigation
+│       │   ├── CategoriesSection.tsx  # Category showcase
+│       │   ├── DealsSection.tsx       # Deals & offers
+│       │   ├── FeaturesSection.tsx    # Feature highlights
+│       │   ├── HeroSection.tsx        # Homepage hero
+│       │   ├── NewsletterSection.tsx  # Newsletter signup
+│       │   ├── SellerHomepage.tsx     # Seller landing page
+│       │   ├── FloatingActions.tsx    # Floating action buttons
+│       │   └── LoadingWrapper.tsx     # Loading states
 │       │
-│       ├── contexts/             # React contexts
-│       │   ├── AuthContext.tsx   # Authentication state
-│       │   └── StatsContext.tsx  # Statistics state
+│       ├── contexts/                 # React contexts
+│       │   ├── AuthContext.tsx       # Authentication state
+│       │   └── StatsContext.tsx      # Statistics state
 │       │
-│       └── lib/                  # Utilities
-│           ├── db.ts            # Database connection
-│           └── utils.ts         # Helper functions
+│       ├── hooks/                    # Custom React hooks
+│       │   └── useNotifications.ts   # Notification hook
+│       │
+│       └── lib/                      # Utilities
+│           ├── db.ts                # Database connection
+│           └── utils.ts             # Helper functions
 │
 ├── 🗄️ DATABASE & SCHEMA
 │   └── prisma/
-│       ├── schema.prisma        # Database schema
-│       ├── dev.db              # SQLite database
-│       └── migrations/         # Database migrations
+│       ├── schema.prisma            # Database schema
+│       ├── dev.db                  # SQLite database (dev)
+│       └── migrations/             # Database migrations
+│           ├── migration_lock.toml  # Migration lock file
+│           ├── 20250810192835_add_buyer_personal_data/
+│           ├── 20250813185829_add_order_status_timestamps/
+│           ├── 20250813194221_add_enhanced_profile_features/
+│           ├── 20250813204158_update_address_model/
+│           └── 20250813210714_sync_profile_fields/
 │
-└── 📦 CONFIGURATION
-    ├── package.json            # Dependencies & scripts
-    ├── tailwind.config.js      # Styling configuration
-    ├── next.config.js          # Next.js configuration  
-    └── agile-config.json       # Agile project settings
+├── � STATIC ASSETS
+│   └── public/
+│       └── uploads/               # User uploaded files
+│           └── products/          # Product images
+│
+├── �📦 CONFIGURATION & BUILD
+│   ├── package.json              # Dependencies & scripts
+│   ├── package-lock.json         # Dependency lock file
+│   ├── next.config.js            # Next.js configuration
+│   ├── tailwind.config.js        # Tailwind CSS configuration
+│   ├── postcss.config.js         # PostCSS configuration
+│   ├── tsconfig.json             # TypeScript configuration
+│   ├── next-env.d.ts             # Next.js type definitions
+│   ├── .eslintrc.js              # ESLint configuration
+│   ├── .gitignore                # Git ignore rules
+│   └── .env                      # Environment variables
+│
+└── 🔧 DEVELOPMENT TOOLS
+    ├── .next/                    # Next.js build output
+    ├── node_modules/             # Dependencies
+    ├── .git/                     # Git repository
+    └── .vscode/                  # VS Code settings
 ```
+
+### **Architecture Layers**
+
+#### **🎨 Presentation Layer (Frontend)**
+- **Next.js 14 App Router** - Modern React framework with file-based routing
+- **TypeScript** - Type-safe development with compile-time error checking
+- **Tailwind CSS + shadcn/ui** - Utility-first styling with premium components
+- **Responsive Design** - Mobile-first approach with breakpoint system
+
+#### **⚙️ Business Logic Layer (API Routes)**
+- **Next.js API Routes** - Server-side API endpoints co-located with frontend
+- **RESTful Architecture** - Standard HTTP methods and status codes
+- **Middleware Integration** - Authentication, validation, and error handling
+- **File Upload System** - Image processing and storage management
+
+#### **🗄️ Data Access Layer (Database)**
+- **Prisma ORM** - Type-safe database access with schema management
+- **SQLite (Development)** - Lightweight database for local development
+- **PostgreSQL (Production)** - Scalable relational database for production
+- **Migration System** - Version-controlled database schema evolution
+
+#### **🔐 Security Layer**
+- **JWT Authentication** - Stateless token-based authentication
+- **Role-based Access Control** - Multi-role authorization (Buyer/Seller/Delivery)
+- **Input Validation** - Server-side validation and sanitization
+- **CORS Configuration** - Cross-origin request security
+
+#### **📊 Analytics & Monitoring Layer**
+- **Built-in Analytics** - Custom stats tracking and reporting
+- **Performance Monitoring** - Core Web Vitals and performance metrics
+- **Error Tracking** - Centralized error logging and monitoring
+- **User Activity Tracking** - Behavioral analytics and insights
 
 ---
 
