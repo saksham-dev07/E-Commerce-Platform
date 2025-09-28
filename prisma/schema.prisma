@@ -1,0 +1,224 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Separate Buyer and Seller models to allow same email for both roles
+model Buyer {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  name     String?
+  
+  // Enhanced profile fields
+  profileImage  String?
+  phone         String?
+  dateOfBirth   DateTime?
+  gender        String?
+  bio           String?
+  
+  // Address fields
+  address       String?
+  city          String?
+  state         String?
+  zipCode       String?
+  country       String @default("India")
+  
+  // Preferences
+  preferredLanguage String @default("English")
+  emailNotifications Boolean @default(true)
+  smsNotifications   Boolean @default(true)
+  marketingEmails    Boolean @default(false)
+  
+  // Buyer-specific relations
+  cartItems     CartItem[]
+  orders        Order[]
+  wishlistItems WishlistItem[]
+  addresses     Address[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Seller {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  name     String?
+  
+  // Enhanced profile fields
+  profileImage      String?
+  phone             String?
+  businessName      String?
+  businessAddress   String?
+  businessPhone     String?
+  taxId             String?
+  bankAccountNumber String?
+  ifscCode          String?
+  
+  // Seller-specific relations
+  products Product[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DeliveryAgent {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  name     String
+  phone    String
+  
+  // Location and service area
+  city          String
+  state         String
+  zipCodes      String  // Comma-separated zip codes they serve
+  vehicleType   String  // "bike", "car", "van", etc.
+  vehicleNumber String
+  licenseNumber String
+  
+  // Status and capacity
+  isActive      Boolean @default(true)
+  isAvailable   Boolean @default(true)
+  maxDeliveries Int     @default(10)  // Max deliveries per day
+  
+  // Profile
+  profileImage  String?
+  address       String?
+  dateOfBirth   DateTime?
+  emergencyContact String?
+  
+  // Relations
+  orders        Order[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  category    String
+  condition   String @default("New")
+  brand       String?
+  weight      Float?
+  dimensions  String?
+  tags        String?
+  inStock     Boolean @default(true)
+  quantity    Int?
+  sellerId    String
+  seller      Seller @relation(fields: [sellerId], references: [id])
+  
+  // Buyer relations
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  wishlistItems WishlistItem[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  buyerId   String
+  productId String
+  quantity  Int    @default(1)
+  
+  buyer     Buyer   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([buyerId, productId])
+}
+
+model Order {
+  id              String @id @default(cuid())
+  buyerId         String
+  total           Float
+  status          OrderStatus @default(PENDING)
+  shippingAddress String
+  
+  // Delivery information
+  deliveryAgentId String?
+  assignedAt      DateTime?
+  estimatedDelivery DateTime?
+  deliveryNotes   String?
+  
+  buyer         Buyer @relation(fields: [buyerId], references: [id])
+  deliveryAgent DeliveryAgent? @relation(fields: [deliveryAgentId], references: [id])
+  orderItems    OrderItem[]
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  processingAt   DateTime?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  cancelledAt    DateTime?
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float  // Price at time of order
+  
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+model WishlistItem {
+  id        String @id @default(cuid())
+  buyerId   String
+  productId String
+  
+  buyer     Buyer   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([buyerId, productId])
+}
+
+model Address {
+  id        String @id @default(cuid())
+  buyerId   String
+  title     String  // e.g., "Home", "Office", "Work"
+  fullName  String
+  phone     String
+  address   String
+  city      String
+  state     String
+  zipCode   String
+  country   String @default("India")
+  isDefault Boolean @default(false)
+  
+  buyer     Buyer @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  ASSIGNED    // Assigned to delivery agent
+  SHIPPED     // Out for delivery
+  DELIVERED
+  CANCELLED
+}
