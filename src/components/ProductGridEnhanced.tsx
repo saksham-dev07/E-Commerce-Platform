@@ -42,6 +42,7 @@ export function ProductGridEnhanced({ showFilters = true, sellerId }: ProductGri
   const [priceRange, setPriceRange] = useState({ min: '', max: '' })
   const [sortBy, setSortBy] = useState('newest')
   const [wishlist, setWishlist] = useState<string[]>([])
+  const [viewingProduct, setViewingProduct] = useState<Product | null>(null)
   const { user } = useAuth()
 
   const categories = [
@@ -493,17 +494,22 @@ export function ProductGridEnhanced({ showFilters = true, sellerId }: ProductGri
                           <ShoppingCart className="w-4 h-4 mr-2" />
                           Add to Cart
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => setViewingProduct(product)}>
                           <Eye className="w-4 h-4" />
                         </Button>
                       </>
                     )}
                     
                     {!user && (
-                      <Button onClick={() => alert('Please login to purchase')} className="w-full" size="sm">
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        Add to Cart
-                      </Button>
+                      <>
+                        <Button onClick={() => alert('Please login to purchase')} className="flex-1" size="sm">
+                          <ShoppingCart className="w-4 h-4 mr-2" />
+                          Add to Cart
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => setViewingProduct(product)}>
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </>
                     )}
                   </CardFooter>
                 </Card>
@@ -577,6 +583,9 @@ export function ProductGridEnhanced({ showFilters = true, sellerId }: ProductGri
                             <div className="flex items-center justify-end space-x-2">
                               {user?.role === 'BUYER' && (
                                 <>
+                                  <Button variant="outline" size="sm" onClick={() => setViewingProduct(product)}>
+                                    <Eye className="w-4 h-4" />
+                                  </Button>
                                   <Button
                                     onClick={() => handleToggleWishlist(product.id)}
                                     variant="outline"
@@ -594,6 +603,11 @@ export function ProductGridEnhanced({ showFilters = true, sellerId }: ProductGri
                                   </Button>
                                 </>
                               )}
+                              {!user && (
+                                <Button variant="outline" size="sm" onClick={() => setViewingProduct(product)}>
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -606,6 +620,141 @@ export function ProductGridEnhanced({ showFilters = true, sellerId }: ProductGri
           </div>
         )}
       </div>
+
+      {/* Product View Modal */}
+      {viewingProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">Product Details</h2>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setViewingProduct(null)}
+                  className="rounded-full"
+                >
+                  ✕
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Product Image */}
+                <div className="space-y-4">
+                  {viewingProduct.imageUrl ? (
+                    <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                      <Image
+                        src={viewingProduct.imageUrl}
+                        alt={viewingProduct.name}
+                        width={500}
+                        height={500}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-square rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
+                      <Package className="w-24 h-24 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                
+                {/* Product Info */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-2">{viewingProduct.name}</h3>
+                    <div className="flex items-center gap-3 mb-4">
+                      <Badge 
+                        variant={viewingProduct.inStock ? "default" : "secondary"}
+                        className={viewingProduct.inStock 
+                          ? "bg-green-100 text-green-800 border-0" 
+                          : "bg-gray-100 text-gray-800 border-0"
+                        }
+                      >
+                        {viewingProduct.inStock ? "🟢 In Stock" : "🔴 Out of Stock"}
+                      </Badge>
+                      <Badge variant="outline" className="text-sm">
+                        {viewingProduct.category}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="text-4xl font-bold text-blue-600">
+                    ₹{viewingProduct.price.toFixed(2)}
+                  </div>
+                  
+                  {viewingProduct.description && (
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-2">Description</h4>
+                      <p className="text-gray-700 leading-relaxed">{viewingProduct.description}</p>
+                    </div>
+                  )}
+                  
+                  <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-200">
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Seller</span>
+                      <p className="text-gray-900 font-semibold">{viewingProduct.seller.name}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Listed On</span>
+                      <p className="text-gray-900">{new Date(viewingProduct.createdAt).toLocaleDateString('en-IN', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}</p>
+                    </div>
+                    {viewingProduct.brand && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-500">Brand</span>
+                        <p className="text-gray-900">{viewingProduct.brand}</p>
+                      </div>
+                    )}
+                    {viewingProduct.condition && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-500">Condition</span>
+                        <p className="text-gray-900">{viewingProduct.condition}</p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-4">
+                    {user?.role === 'BUYER' && (
+                      <>
+                        <Button 
+                          onClick={() => handleAddToCart(viewingProduct.id)}
+                          disabled={!viewingProduct.inStock}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700"
+                        >
+                          <ShoppingCart className="w-5 h-5 mr-2" />
+                          Add to Cart
+                        </Button>
+                        <Button 
+                          onClick={() => handleToggleWishlist(viewingProduct.id)}
+                          variant="outline"
+                          className="px-6"
+                        >
+                          <Heart className={`w-5 h-5 ${wishlist.includes(viewingProduct.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                        </Button>
+                      </>
+                    )}
+                    {!user && (
+                      <Button 
+                        onClick={() => alert('Please login to purchase')}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                      >
+                        <ShoppingCart className="w-5 h-5 mr-2" />
+                        Login to Purchase
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </section>
   )
 }

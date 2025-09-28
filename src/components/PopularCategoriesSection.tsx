@@ -15,7 +15,12 @@ import {
   Car,
   Heart,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  Dumbbell,
+  Wrench,
+  Briefcase,
+  Package,
+  ChevronLeft
 } from 'lucide-react'
 
 const categories = [
@@ -28,12 +33,12 @@ const categories = [
     description: 'Latest gadgets & tech'
   },
   {
-    name: 'Fashion',
+    name: 'Clothing',
     icon: Shirt,
-    href: '/search?category=Fashion',
+    href: '/search?category=Clothing',
     color: 'bg-pink-500',
     hoverColor: 'hover:bg-pink-600',
-    description: 'Trendy clothing & accessories'
+    description: 'Trendy clothing & fashion'
   },
   {
     name: 'Home & Garden',
@@ -44,9 +49,17 @@ const categories = [
     description: 'Transform your living space'
   },
   {
-    name: 'Books & Media',
+    name: 'Sports & Outdoors',
+    icon: Dumbbell,
+    href: '/search?category=Sports%20%26%20Outdoors',
+    color: 'bg-red-500',
+    hoverColor: 'hover:bg-red-600',
+    description: 'Fitness & outdoor gear'
+  },
+  {
+    name: 'Books',
     icon: BookOpen,
-    href: '/search?category=Books%20%26%20Media',
+    href: '/search?category=Books',
     color: 'bg-orange-500',
     hoverColor: 'hover:bg-orange-600',
     description: 'Expand your knowledge'
@@ -60,28 +73,44 @@ const categories = [
     description: 'Games & entertainment'
   },
   {
-    name: 'Jewelry & Accessories',
-    icon: Watch,
-    href: '/search?category=Jewelry%20%26%20Accessories',
-    color: 'bg-yellow-500',
-    hoverColor: 'hover:bg-yellow-600',
-    description: 'Luxury & accessories'
-  },
-  {
-    name: 'Automotive',
-    icon: Car,
-    href: '/search?category=Automotive',
-    color: 'bg-red-500',
-    hoverColor: 'hover:bg-red-600',
-    description: 'Car accessories & parts'
-  },
-  {
     name: 'Health & Beauty',
     icon: Heart,
     href: '/search?category=Health%20%26%20Beauty',
     color: 'bg-teal-500',
     hoverColor: 'hover:bg-teal-600',
     description: 'Wellness & beauty products'
+  },
+  {
+    name: 'Tools & Hardware',
+    icon: Wrench,
+    href: '/search?category=Tools%20%26%20Hardware',
+    color: 'bg-gray-600',
+    hoverColor: 'hover:bg-gray-700',
+    description: 'Tools & hardware supplies'
+  },
+  {
+    name: 'Automotive',
+    icon: Car,
+    href: '/search?category=Automotive',
+    color: 'bg-indigo-500',
+    hoverColor: 'hover:bg-indigo-600',
+    description: 'Car accessories & parts'
+  },
+  {
+    name: 'Office Supplies',
+    icon: Briefcase,
+    href: '/search?category=Office%20Supplies',
+    color: 'bg-cyan-500',
+    hoverColor: 'hover:bg-cyan-600',
+    description: 'Office & business supplies'
+  },
+  {
+    name: 'Other',
+    icon: Package,
+    href: '/search?category=Other',
+    color: 'bg-slate-500',
+    hoverColor: 'hover:bg-slate-600',
+    description: 'Miscellaneous items'
   }
 ]
 
@@ -94,10 +123,87 @@ export function PopularCategoriesSection() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
   const [categoryStats, setCategoryStats] = useState<CategoryStats>({ totalProducts: 0, totalCategories: 0 })
   const [loading, setLoading] = useState(true)
+  const [scrollPosition, setScrollPosition] = useState(0)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
 
   useEffect(() => {
     fetchCategoryStats()
+    // Check initial scroll state
+    setTimeout(checkScrollButtons, 100)
   }, [])
+
+  const checkScrollButtons = () => {
+    const container = document.getElementById('categories-scroll-container')
+    if (container) {
+      const { scrollLeft, scrollWidth, clientWidth } = container
+      setCanScrollLeft(scrollLeft > 0)
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1)
+    }
+  }
+
+  const scrollContainer = (direction: 'left' | 'right') => {
+    const container = document.getElementById('categories-scroll-container')
+    if (container) {
+      const cardWidth = 192 + 24 // card width (w-48 = 192px) + gap (gap-6 = 24px)
+      const containerWidth = container.clientWidth - 96 // subtract padding (px-12 = 48px on each side)
+      const currentScroll = container.scrollLeft
+      
+      // Calculate how many full cards can fit in the visible area
+      const cardsInView = Math.floor(containerWidth / cardWidth)
+      const scrollAmount = cardsInView * cardWidth
+      
+      let newPosition
+      if (direction === 'left') {
+        newPosition = Math.max(0, currentScroll - scrollAmount)
+      } else {
+        newPosition = currentScroll + scrollAmount
+      }
+      
+      // Ensure we align to card boundaries
+      const cardIndex = Math.round(newPosition / cardWidth)
+      const alignedPosition = cardIndex * cardWidth
+      
+      container.scrollTo({
+        left: alignedPosition,
+        behavior: 'smooth'
+      })
+      setScrollPosition(alignedPosition)
+      
+      // Update button states after scroll
+      setTimeout(checkScrollButtons, 400)
+    }
+  }
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget
+    const cardWidth = 192 + 24 // card width + gap
+    const currentScroll = container.scrollLeft
+    
+    // Update button states
+    checkScrollButtons()
+    
+    // Snap to nearest card when scrolling stops
+    clearTimeout((window as any).scrollTimeout)
+    ;(window as any).scrollTimeout = setTimeout(() => {
+      // Calculate which card should be at the start of the visible area
+      const cardIndex = Math.round(currentScroll / cardWidth)
+      const snapPosition = cardIndex * cardWidth
+      
+      // Only snap if we're not already aligned
+      if (Math.abs(currentScroll - snapPosition) > 5) {
+        container.scrollTo({
+          left: snapPosition,
+          behavior: 'smooth'
+        })
+      }
+      
+      setScrollPosition(snapPosition)
+      setTimeout(checkScrollButtons, 100)
+    }, 100) // Reduced timeout for faster snapping
+    
+    setScrollPosition(currentScroll)
+  }
 
   const fetchCategoryStats = async () => {
     try {
@@ -132,34 +238,69 @@ export function PopularCategoriesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          {categories.map((category) => (
-            <Link key={category.name} href={category.href}>
-              <Card 
-                className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-0 shadow-md overflow-hidden"
-                onMouseEnter={() => setHoveredCategory(category.name)}
-                onMouseLeave={() => setHoveredCategory(null)}
-              >
-                <CardContent className="p-6 text-center relative">
-                  <div className={`w-16 h-16 ${category.color} ${category.hoverColor} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
-                    <category.icon className="w-8 h-8 text-white" />
-                  </div>
-                  
-                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-2">
-                    {category.name}
-                  </h3>
-                  
-                  <p className="text-sm text-gray-600 mb-2">
-                    {category.description}
-                  </p>
-                  
-                  <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <ChevronRight className="w-5 h-5 text-blue-600 mx-auto" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+        <div className="relative mb-8">
+          {/* Navigation arrows */}
+          {canScrollLeft && (
+            <button
+              onClick={() => scrollContainer('left')}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-all duration-200 hover:shadow-xl border border-gray-200 hover:scale-110"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-600" />
+            </button>
+          )}
+          
+          {canScrollRight && (
+            <button
+              onClick={() => scrollContainer('right')}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-all duration-200 hover:shadow-xl border border-gray-200 hover:scale-110"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-600" />
+            </button>
+          )}
+          
+          {/* Horizontal scrolling container */}
+          <div 
+            id="categories-scroll-container"
+            className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 px-12 scroll-smooth scroll-snap-x"
+            onScroll={handleScroll}
+          >
+            {categories.map((category, index) => (
+              <Link key={category.name} href={category.href}>
+                <Card 
+                  className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-0 shadow-md overflow-hidden flex-shrink-0 w-48 hover:-translate-y-1 scroll-snap-start"
+                  onMouseEnter={() => setHoveredCategory(category.name)}
+                  onMouseLeave={() => setHoveredCategory(null)}
+                >
+                  <CardContent className="p-6 text-center relative">
+                    <div className={`w-16 h-16 ${category.color} ${category.hoverColor} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-2xl`}>
+                      <category.icon className="w-8 h-8 text-white group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    
+                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-2">
+                      {category.name}
+                    </h3>
+                    
+                    <p className="text-sm text-gray-600 mb-2 group-hover:text-gray-700 transition-colors">
+                      {category.description}
+                    </p>
+                    
+                    <div className="mt-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                      <ChevronRight className="w-5 h-5 text-blue-600 mx-auto animate-pulse" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          
+          {/* Scroll indicators with animation */}
+          <div className="flex justify-center mt-4">
+            <div className="text-sm text-gray-500 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-2 rounded-full border border-gray-200 shadow-sm animate-bounce">
+              ← Scroll to explore all {categories.length} categories →
+            </div>
+          </div>
         </div>
 
         {/* Quick Stats */}

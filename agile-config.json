@@ -1,0 +1,107 @@
+{
+  "project": {
+    "name": "E-Commerce Platform",
+    "version": "1.0.0",
+    "agileFramework": "Scrum",
+    "methodology": "Agile",
+    "created": "2025-09-29",
+    "lastUpdated": "2025-09-29"
+  },
+  "team": {
+    "size": 5,
+    "roles": [
+      "Product Owner",
+      "Scrum Master", 
+      "Frontend Developer",
+      "Backend Developer",
+      "Full-stack Developer",
+      "UI/UX Designer"
+    ],
+    "capacity": {
+      "hoursPerSprint": 80,
+      "storyPointsPerSprint": 21,
+      "velocityHistory": [12, 16, 19, 21, 22, 24, 25, 24, 26]
+    }
+  },
+  "sprints": {
+    "duration": "2 weeks",
+    "current": {
+      "number": 10,
+      "startDate": "2025-11-11",
+      "endDate": "2025-11-24",
+      "goal": "Enhance delivery management system with automated assignment and real-time tracking",
+      "capacity": 21,
+      "committed": 21
+    }
+  },
+  "ceremonies": {
+    "sprintPlanning": {
+      "frequency": "Every 2 weeks",
+      "duration": "4 hours",
+      "day": "Monday"
+    },
+    "dailyStandup": {
+      "frequency": "Daily",
+      "duration": "15 minutes",
+      "time": "09:00"
+    },
+    "sprintReview": {
+      "frequency": "End of sprint",
+      "duration": "2 hours",
+      "day": "Friday"
+    },
+    "sprintRetrospective": {
+      "frequency": "End of sprint",
+      "duration": "1.5 hours",
+      "day": "Friday"
+    },
+    "backlogRefinement": {
+      "frequency": "Weekly",
+      "duration": "1 hour", 
+      "day": "Wednesday"
+    }
+  },
+  "metrics": {
+    "velocity": {
+      "current": 26,
+      "average": 22.3,
+      "trend": "increasing"
+    },
+    "quality": {
+      "bugEscapeRate": 2.1,
+      "codeCoverage": 84,
+      "userSatisfaction": 4.2
+    },
+    "delivery": {
+      "deploymentFrequency": "2.2 per week",
+      "leadTime": "4.2 days",
+      "mttr": "1.3 hours"
+    }
+  },
+  "tools": {
+    "projectManagement": "GitHub Projects",
+    "codeRepository": "GitHub",
+    "ci/cd": "GitHub Actions",
+    "communication": "Slack/Teams",
+    "documentation": "Markdown files in repo"
+  },
+  "definitionOfReady": [
+    "Story is written in user language",
+    "Acceptance criteria are clear and testable", 
+    "Story is sized (story points assigned)",
+    "Dependencies identified",
+    "UI/UX requirements clarified",
+    "Technical approach agreed upon"
+  ],
+  "definitionOfDone": [
+    "Code implemented and peer reviewed",
+    "Unit tests written (>80% coverage)",
+    "Integration tests pass",
+    "UI is responsive",
+    "Accessibility standards met",
+    "Documentation updated",
+    "Deployed to staging",
+    "Product Owner accepted",
+    "Performance criteria met"
+  ]
+}
