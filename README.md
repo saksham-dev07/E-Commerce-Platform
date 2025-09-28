@@ -542,8 +542,8 @@ Friday    15:00 - Sprint Review & Retrospective
 
 **Built with ❤️ using Agile methodology and modern web technologies**
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/ecommerce-platform?style=social)](https://github.com/your-username/ecommerce-platform/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/your-username/ecommerce-platform?style=social)](https://github.com/your-username/ecommerce-platform/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/saksham-dev07/ecommerce-platform?style=social)](https://github.com/saksham-dev07/ecommerce-platform/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/saksham-dev07/ecommerce-platform?style=social)](https://github.com/saksham-dev07/ecommerce-platform/network/members)
 
 **Sprint 10 in progress** | **Next release: January 2026** | **Velocity: 26 SP/sprint**
 
